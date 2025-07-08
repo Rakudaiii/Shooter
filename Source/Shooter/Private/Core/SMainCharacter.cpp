@@ -7,7 +7,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
-#include "Shooter/Public/Components/SBuffManager.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Shooter/Public/Components/SFightSystemComponent.h"
 #include "Shooter/Public/Components/SHealthComponent.h"
 #include "Shooter/Public/Components/SParkourMovementComponent.h"
@@ -15,43 +15,36 @@
 // Log category for Main Character
 DEFINE_LOG_CATEGORY(LogMainCharacter);
 
+
 ASMainCharacter::ASMainCharacter()
 {
 	PrimaryActorTick.bCanEverTick = false;
+
 
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	Camera->SetupAttachment(GetMesh());
-	Camera->SetRelativeLocation(FVector(0.0f, 0.0f, 70.0f));
+	Camera->SetupAttachment(GetCapsuleComponent());
 	Camera->bUsePawnControlRotation = true;
-	bUseControllerRotationYaw = true;
+
+	GetMesh()->SetupAttachment(Camera);
+	GetMesh()->CastShadow = false;
+
+
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 
 	HealthComponent = CreateDefaultSubobject<USHealthComponent>(TEXT("HealthComponent"));
 	ParkourMovementComponent = CreateDefaultSubobject<USParkourMovementComponent>(TEXT("ParkourMovementComponent"));
-	BuffManager = CreateDefaultSubobject<USBuffManager>(TEXT("BuffManager"));
 	FightSystemComponent = CreateDefaultSubobject<USFightSystemComponent>(TEXT("FightSystemComponent"));
 }
-
 
 void ASMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	
 }
-
-void ASMainCharacter::Landed(const FHitResult& Hit)
-{
-	Super::Landed(Hit);
-
-	ParkourMovementComponent->LandEvent();
-}
-
-
-
 
 
 void ASMainCharacter::NotifyControllerChanged()
@@ -78,23 +71,25 @@ void ASMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, ParkourMovementComponent,
 		                                   &USParkourMovementComponent::StopJump);
 
-		//Key is Left Shift - Event Dash
-		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Started, ParkourMovementComponent,
-		                                   &USParkourMovementComponent::Dash);
+		//Key is Left Shift - Event Sprint
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, ParkourMovementComponent,
+		                                   &USParkourMovementComponent::StartSprint);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, ParkourMovementComponent,
+		                                   &USParkourMovementComponent::StopSprint);
 
 		//Key is C - Event Slide
 		EnhancedInputComponent->BindAction(SlideAction, ETriggerEvent::Started, ParkourMovementComponent,
 		                                   &USParkourMovementComponent::Slide);
 
 		//Key is Left mouse button - Event Shoot
-		/*EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Started, FightSystemComponent,
-									   &ASMainCharacter::StartFiring);
+		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Started, FightSystemComponent,
+		                                   &USFightSystemComponent::StartFiring);
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, FightSystemComponent,
-									   &ASMainCharacter::StopFiring);
+		                                   &USFightSystemComponent::StopFiring);
 
 		//Key is R - Reload Ammo
 		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, FightSystemComponent,
-									   &ASMainCharacter::ReloadGun);*/
+		                                   &USFightSystemComponent::ReloadGun);
 
 		//Keys WASD - Event Move
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASMainCharacter::Move);

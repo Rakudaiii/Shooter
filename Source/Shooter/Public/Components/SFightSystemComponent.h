@@ -6,6 +6,9 @@
 
 class USGunBase;
 
+// Log category for FightSystemComponent
+DECLARE_LOG_CATEGORY_EXTERN(LogFightSystem, Log, All);
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SHOOTER_API USFightSystemComponent : public UActorComponent
 {
@@ -14,15 +17,15 @@ class SHOOTER_API USFightSystemComponent : public UActorComponent
 public:
 	USFightSystemComponent();
 
-	UFUNCTION(BlueprintCallable, Category = "Shoot")
+	UFUNCTION(BlueprintCallable)
 	void EquipGun(TSubclassOf<USGunBase> GunClass);
 
 	UFUNCTION(BlueprintCallable)
 	void StartFiring();
-	
+
 	UFUNCTION(BlueprintCallable)
 	void StopFiring();
-	
+
 	UFUNCTION(BlueprintCallable)
 	void ReloadGun();
 
@@ -36,7 +39,6 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Component")
 	void Initialize();
 
-
 	// ------------ Shoot ------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
 	bool bCanShoot = true;
@@ -44,7 +46,12 @@ protected:
 	UPROPERTY()
 	USGunBase* CurrentGun;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<USGunBase> SelectedGun;
+
 public:
-	UFUNCTION(BlueprintPure) FORCEINLINE USGunBase* GetCurrentGun() const { return CurrentGun; };
-	UFUNCTION(BlueprintPure) FORCEINLINE bool GetbCanShoot() const { return bCanShoot; };
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE USGunBase* GetCurrentGun() const { return CurrentGun; };
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE bool GetbCanShoot() const { return bCanShoot; };
 };

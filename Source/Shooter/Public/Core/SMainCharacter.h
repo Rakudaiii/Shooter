@@ -37,9 +37,6 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	virtual void Landed(const FHitResult& Hit) override;
-
-
 	void Move(const FInputActionValue& Value);
 
 	void Look(const FInputActionValue& Value);
@@ -58,7 +55,7 @@ protected:
 	UInputAction* LookAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	UInputAction* DashAction;
+	UInputAction* SprintAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* SlideAction;
@@ -85,16 +82,9 @@ protected:
 	USParkourMovementComponent* ParkourMovementComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
-	USBuffManager* BuffManager;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	USFightSystemComponent* FightSystemComponent;
 
-	//Variables
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Health")
-	float Health = 100.0f;
 
 public:
-	UFUNCTION(BlueprintPure) FORCEINLINE float GetHealth() const { return Health; }
 	UFUNCTION(BlueprintPure) FORCEINLINE UCameraComponent* GetCamera() const { return Camera; }
 };

@@ -12,7 +12,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedDelegate, const floa
 // Log category for HealthComponent
 DECLARE_LOG_CATEGORY_EXTERN(LogHealthComponent, Log, All);
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SHOOTER_API USHealthComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -24,7 +24,7 @@ public:
 	void Initialize();
 
 	UFUNCTION(BlueprintCallable)
-	void TakeDamage(const float InDamage, AActor* DamagedActor);
+	void TakeDamage(const float InDamage, const AActor* DamagedActor);
 	
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnDeadDelegate OnDead;

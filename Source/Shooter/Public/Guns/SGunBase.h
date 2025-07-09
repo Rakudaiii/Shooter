@@ -15,7 +15,7 @@ class SHOOTER_API USGunBase : public UObject
 
 public:
 	UFUNCTION(BlueprintCallable)
-	virtual void Init(ACharacter* InCharacter);
+	virtual void Init(AActor* InCharacter);
 
 	UFUNCTION(BlueprintCallable)
 	void StartFiring();
@@ -27,11 +27,12 @@ public:
 	void ReloadAmmo();
 
 protected:
-	// === Owner ===
+	
+	//References 
 	UPROPERTY()
-	ACharacter* OwnerCharacterGun;
+	AActor* OwnerActorGun;
 
-	// === Firing ===
+	// ------------ Firing ------------
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Gun|Fire")
 	bool bIsAuto = true;
 
@@ -51,7 +52,7 @@ protected:
 	UFUNCTION()
 	void Fire();
 
-	// === Reloading ===
+	// ------------ Reloading ------------
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Gun|Reload")
 	float ReloadTime = 1.0f;
 
@@ -71,25 +72,12 @@ protected:
 	void CompleteReload();
 
 public:
-	// === Getters ===
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE int32 GetCurrentAmmo() const { return CurrentAmmo; }
-
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE int32 GetMaxAmmo() const { return MaxAmmo; }
-
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE bool IsReloading() const { return bIsReloading; }
-
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE float GetGunDamage() const { return GunDamage; }
-
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE ACharacter* GetOwnerCharacter() const { return OwnerCharacterGun; }
-
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE float GetFireRate() const { return FireRate; }
-
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE bool IsFiring() const { return bIsFiring; }
+	// ------------ Getters ------------
+	UFUNCTION(BlueprintPure) FORCEINLINE int32 GetCurrentAmmo() const { return CurrentAmmo; }
+	UFUNCTION(BlueprintPure) FORCEINLINE int32 GetMaxAmmo() const { return MaxAmmo; }
+	UFUNCTION(BlueprintPure) FORCEINLINE bool IsReloading() const { return bIsReloading; }
+	UFUNCTION(BlueprintPure) FORCEINLINE float GetGunDamage() const { return GunDamage; }
+	UFUNCTION(BlueprintPure) FORCEINLINE AActor* GetOwnerActorGun() const { return OwnerActorGun; }
+	UFUNCTION(BlueprintPure) FORCEINLINE float GetFireRate() const { return FireRate; }
+	UFUNCTION(BlueprintPure) FORCEINLINE bool IsFiring() const { return bIsFiring; }
 };

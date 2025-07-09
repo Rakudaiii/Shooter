@@ -6,7 +6,6 @@
 #include "SMainCharacter.generated.h"
 
 
-
 //Input
 class UInputMappingContext;
 class UInputAction;
@@ -19,7 +18,7 @@ class UCameraComponent;
 class USHealthComponent;
 class USParkourMovementComponent;
 class USBuffManager;
-class USFightSystemComponent;
+class USWeaponManager;
 
 // Log category for Main Character
 DECLARE_LOG_CATEGORY_EXTERN(LogMainCharacter, Log, All);
@@ -33,15 +32,13 @@ public:
 	ASMainCharacter();
 
 protected:
-
-
 	virtual void BeginPlay() override;
 
 	void Move(const FInputActionValue& Value);
 
 	void Look(const FInputActionValue& Value);
 
-	//Input
+	/// --------- Input ---------
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputMappingContext* DefaultMappingContext;
 
@@ -70,8 +67,8 @@ protected:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-
-	//Components
+protected:
+	// --------- Components ---------
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	UCameraComponent* Camera;
 
@@ -82,9 +79,12 @@ protected:
 	USParkourMovementComponent* ParkourMovementComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
-	USFightSystemComponent* FightSystemComponent;
-
+	USWeaponManager* WeaponManager;
 
 public:
-	UFUNCTION(BlueprintPure) FORCEINLINE UCameraComponent* GetCamera() const { return Camera; }
+	// --------- Getters ---------
+	UFUNCTION(BlueprintPure)FORCEINLINE UCameraComponent* GetCamera() const { return Camera; }
+	UFUNCTION(BlueprintPure)FORCEINLINE USHealthComponent* GetHealthComponent() const { return HealthComponent; }
+	UFUNCTION(BlueprintPure)FORCEINLINE USParkourMovementComponent* GetParkourMovementComponent() const { return ParkourMovementComponent; }
+	UFUNCTION(BlueprintPure)FORCEINLINE USWeaponManager* GetWeaponManager() const { return WeaponManager; }
 };

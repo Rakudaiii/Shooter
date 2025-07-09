@@ -10,7 +10,7 @@ class ACharacter;
 // Log category for parkour movement
 DECLARE_LOG_CATEGORY_EXTERN(LogParkourMovementComponent, Log, All);
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SHOOTER_API USParkourMovementComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -23,17 +23,17 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	
 	UFUNCTION()
 	void Initialize();
-
-	// References to owner and movement component
+	
+	// References 
 	UPROPERTY(BlueprintReadOnly, Category = "Component")
 	ACharacter* OwnerCharacter;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Component")
 	UCharacterMovementComponent* CharacterMovementComponent;
-
-	// Getters for references
+	
 	UFUNCTION(BlueprintCallable, Category = "Component")
 	ACharacter* GetOwnerCharacter() const { return OwnerCharacter; }
 
@@ -143,7 +143,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Jump")
 	float JumpZVelocity = 420.0f;
 
-	// Getters for jump properties
+	
 	UFUNCTION(BlueprintCallable, Category = "Jump")
 	bool CanJump() const { return bCanJump; }
 
@@ -165,7 +165,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Sprint")
 	void StopSprint();
 
-	//Setters For sprint properties
+
 	UFUNCTION(BlueprintCallable, Category = "Sprint")
 	void SetIsCanSprint(const bool InNewCanSprint) { bCanSprint = InNewCanSprint; }
 
@@ -177,7 +177,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprint")
 	float SprintSpeed = 1200.0f;
 
-	// Getters for sprint properties
+
 	UFUNCTION(BlueprintCallable, Category = "Sprint")
 	bool CanSprint() const { return bCanSprint; }
 

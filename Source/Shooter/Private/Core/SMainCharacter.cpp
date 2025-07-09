@@ -8,7 +8,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Shooter/Public/Components/SFightSystemComponent.h"
+#include "Shooter/Public/Components/SWeaponManager.h"
 #include "Shooter/Public/Components/SHealthComponent.h"
 #include "Shooter/Public/Components/SParkourMovementComponent.h"
 
@@ -38,7 +38,7 @@ ASMainCharacter::ASMainCharacter()
 
 	HealthComponent = CreateDefaultSubobject<USHealthComponent>(TEXT("HealthComponent"));
 	ParkourMovementComponent = CreateDefaultSubobject<USParkourMovementComponent>(TEXT("ParkourMovementComponent"));
-	FightSystemComponent = CreateDefaultSubobject<USFightSystemComponent>(TEXT("FightSystemComponent"));
+	WeaponManager = CreateDefaultSubobject<USWeaponManager>(TEXT("FightSystemComponent"));
 }
 
 void ASMainCharacter::BeginPlay()
@@ -82,14 +82,14 @@ void ASMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		                                   &USParkourMovementComponent::Slide);
 
 		//Key is Left mouse button - Event Shoot
-		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Started, FightSystemComponent,
-		                                   &USFightSystemComponent::StartFiring);
-		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, FightSystemComponent,
-		                                   &USFightSystemComponent::StopFiring);
+		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Started, WeaponManager,
+		                                   &USWeaponManager::StartFiring);
+		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, WeaponManager,
+		                                   &USWeaponManager::StopFiring);
 
 		//Key is R - Reload Ammo
-		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, FightSystemComponent,
-		                                   &USFightSystemComponent::ReloadGun);
+		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, WeaponManager,
+		                                   &USWeaponManager::ReloadGun);
 
 		//Keys WASD - Event Move
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASMainCharacter::Move);
@@ -103,27 +103,25 @@ void ASMainCharacter::Move(const FInputActionValue& Value)
 {
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
-	{
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+	if (!Controller) return;
 
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	const FRotator Rotation = Controller->GetControlRotation();
+	const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 
-		AddMovementInput(ForwardDirection, MovementVector.Y);
-		AddMovementInput(RightDirection, MovementVector.X);
-	}
+	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+	AddMovementInput(ForwardDirection, MovementVector.Y);
+	AddMovementInput(RightDirection, MovementVector.X);
 }
 
 void ASMainCharacter::Look(const FInputActionValue& Value)
 {
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
-	{
-		AddControllerYawInput(LookAxisVector.X);
-		AddControllerPitchInput(LookAxisVector.Y);
-	}
+	if (!Controller) return;
+
+	AddControllerYawInput(LookAxisVector.X);
+	AddControllerPitchInput(LookAxisVector.Y);
 }

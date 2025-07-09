@@ -11,6 +11,6 @@ class SHOOTER_API USAk47 : public USGunBase
 	GENERATED_BODY()
 
 public:
-	virtual void Init(ACharacter* InCharacter) override;
+	virtual void Init(AActor* InActor) override;
 	
 };

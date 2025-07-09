@@ -14,6 +14,8 @@ USParkourMovementComponent::USParkourMovementComponent()
 void USParkourMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	
 	Initialize();
 }
 
@@ -21,10 +23,11 @@ void USParkourMovementComponent::Initialize()
 {
 	OwnerCharacter = Cast<ACharacter>(GetOwner());
 	CharacterMovementComponent = OwnerCharacter->GetCharacterMovement();
-
+	
 	InitializeSlide();
 	InitializeJump();
 }
+
 
 void USParkourMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
                                                FActorComponentTickFunction* ThisTickFunction)
@@ -39,8 +42,8 @@ void USParkourMovementComponent::InitializeSlide()
 {
 	if (!bCanSlide) return;
 
-
 	UE_LOG(LogParkourMovementComponent, Log, TEXT("Slide initialized successfully."));
+	
 	NormalSpeed = CharacterMovementComponent->MaxWalkSpeed;
 	NormalFriction = CharacterMovementComponent->GroundFriction;
 	NormalDeceleration = CharacterMovementComponent->BrakingDecelerationWalking;
@@ -50,10 +53,8 @@ void USParkourMovementComponent::InitializeSlide()
 
 void USParkourMovementComponent::Slide()
 {
-	if (!CharacterMovementComponent || bIsSliding || CharacterMovementComponent->IsFalling() || !bCanSlide ||
-		OwnerCharacter->GetVelocity().Length() < 10.0f)
+	if (!CharacterMovementComponent || bIsSliding || CharacterMovementComponent->IsFalling() || !bCanSlide || OwnerCharacter->GetVelocity().Length() < 10.0f)
 		return;
-
 
 	UE_LOG(LogParkourMovementComponent, Warning, TEXT("Sliding"));
 
@@ -87,10 +88,10 @@ void USParkourMovementComponent::StopSlide()
 	CurrentCapsuleHeight = SlideCapsuleHalfHeight;
 	bIsStandingUp = true;
 
-	if (GetWorld())
-	{
-		GetWorld()->GetTimerManager().ClearTimer(SlideTimer);
-	}
+
+	GetWorld()->GetTimerManager().ClearTimer(SlideTimer);
+
+	UE_LOG(LogParkourMovementComponent, Warning, TEXT("Slide stopped"));
 }
 
 void USParkourMovementComponent::StandUpAnimation(float DeltaTime)
@@ -148,11 +149,12 @@ void USParkourMovementComponent::StartJump()
 
 void USParkourMovementComponent::StopJump()
 {
-	if (bCanJump)
-	{
-		OwnerCharacter->StopJumping();
-		bIsJumping = false;
-	}
+	if (!bCanJump) return;
+
+	OwnerCharacter->StopJumping();
+	bIsJumping = false;
+
+	UE_LOG(LogParkourMovementComponent, Warning, TEXT("Jump stopped"));
 }
 
 // --------- Sprint ---------
@@ -160,7 +162,7 @@ void USParkourMovementComponent::StartSprint()
 {
 	if (!CharacterMovementComponent || bIsSprinting || bIsSliding || CharacterMovementComponent->IsFalling() || !bCanSprint)
 		return;
-	
+
 	UE_LOG(LogParkourMovementComponent, Warning, TEXT("Sprinting"));
 	bIsSprinting = true;
 	CharacterMovementComponent->MaxWalkSpeed = SprintSpeed;
@@ -168,10 +170,9 @@ void USParkourMovementComponent::StartSprint()
 
 void USParkourMovementComponent::StopSprint()
 {
-	if (bIsSprinting)
-	{
-		CharacterMovementComponent->MaxWalkSpeed = NormalSpeed;
-		bIsSprinting = false;
-		UE_LOG(LogParkourMovementComponent, Warning, TEXT("Sprint stopped"));
-	}
+	if (!bIsSprinting) return;
+
+	CharacterMovementComponent->MaxWalkSpeed = NormalSpeed;
+	bIsSprinting = false;
+	UE_LOG(LogParkourMovementComponent, Warning, TEXT("Sprint stopped"));
 }

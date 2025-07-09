@@ -3,15 +3,14 @@
 #include "Camera/CameraComponent.h"
 #include "Components/SHealthComponent.h"
 #include "Components/SParkourMovementComponent.h"
-#include "GameFramework/Character.h"
 
 // Log category for Gun
 DEFINE_LOG_CATEGORY(LogGun);
 
 
-void USGunBase::Init(ACharacter* InCharacter)
+void USGunBase::Init(AActor* InActor)
 {
-	OwnerCharacterGun = InCharacter;
+	OwnerActorGun = InActor;
 }
 
 void USGunBase::StartFiring()
@@ -37,7 +36,7 @@ void USGunBase::StopFiring()
 	if (bIsAuto)
 		GetWorld()->GetTimerManager().ClearTimer(AutoFireHandle);
 	
-	if (USParkourMovementComponent* ParkourMovementComp = OwnerCharacterGun->FindComponentByClass<USParkourMovementComponent>())
+	if (USParkourMovementComponent* ParkourMovementComp = OwnerActorGun->FindComponentByClass<USParkourMovementComponent>())
 		ParkourMovementComp->SetIsCanSprint(true);
 
 	bIsFiring = false;
@@ -47,15 +46,15 @@ void USGunBase::Fire()
 {
 	if (bIsReloading) return;
 
-	if (!OwnerCharacterGun) return;
+	if (!OwnerActorGun) return;
 
-	if (USParkourMovementComponent* ParkourMovementComp = OwnerCharacterGun->FindComponentByClass<USParkourMovementComponent>())
+	if (USParkourMovementComponent* ParkourMovementComp = OwnerActorGun->FindComponentByClass<USParkourMovementComponent>())
 	{
 		ParkourMovementComp->StopSprint();
 		ParkourMovementComp->SetIsCanSprint(false);
 	}
 
-	UCameraComponent* Camera = OwnerCharacterGun->FindComponentByClass<UCameraComponent>();
+	UCameraComponent* Camera = OwnerActorGun->FindComponentByClass<UCameraComponent>();
 	if (!Camera) return;
 
 	FVector Start = Camera->GetComponentLocation();
@@ -63,7 +62,7 @@ void USGunBase::Fire()
 
 	FHitResult Hit;
 	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(OwnerCharacterGun);
+	Params.AddIgnoredActor(OwnerActorGun);
 
 	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params);
 
@@ -72,7 +71,7 @@ void USGunBase::Fire()
 	if (USHealthComponent* HealthComp = Hit.GetActor()->FindComponentByClass<USHealthComponent>())
 	{
 		const float FinalDamage = (Hit.BoneName == "head" || Hit.BoneName == "Head") ? GunDamage * 2.0f : GunDamage;
-		HealthComp->TakeDamage(FinalDamage, OwnerCharacterGun);
+		HealthComp->TakeDamage(FinalDamage, OwnerActorGun);
 	}
 
 	--CurrentAmmo;
@@ -91,23 +90,18 @@ void USGunBase::ReloadAmmo()
 	if (bIsReloading || CurrentAmmo >= MaxAmmo)
 		return;
 
-
 	bIsReloading = true;
 
-	GetWorld()->GetTimerManager().SetTimer(
-		ReloadHandle,
-		this,
-		&USGunBase::CompleteReload,
-		ReloadTime,
-		false
-	);
+	GetWorld()->GetTimerManager().SetTimer(ReloadHandle,this,&USGunBase::CompleteReload,ReloadTime,false);
 
-	UE_LOG(LogGun, Log, TEXT("Start Reload"));
+	UE_LOG(LogGun, Log, TEXT("Reload was started"));
 }
 
 void USGunBase::CompleteReload()
 {
 	CurrentAmmo = MaxAmmo;
+	
 	bIsReloading = false;
-	UE_LOG(LogGun, Log, TEXT("Reload complete"));
+	
+	UE_LOG(LogGun, Log, TEXT("Reload was completed"));
 }

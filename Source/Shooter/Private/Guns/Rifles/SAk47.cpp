@@ -1,8 +1,8 @@
 ﻿#include "Shooter/Public/Guns/Rifles/SAk47.h"
 
-void USAk47::Init(ACharacter* InCharacter)
+void USAk47::Init(AActor* InActor)
 {
-	Super::Init(InCharacter);
+	Super::Init(InActor);
 
 	bIsAuto = true;
 	FireRate = 0.3f;

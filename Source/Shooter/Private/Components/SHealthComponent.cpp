@@ -23,18 +23,16 @@ void USHealthComponent::Initialize()
 	CurrenHealth = MaxHealth;
 }
 
-void USHealthComponent::TakeDamage(const float InDamage, AActor* DamagedActor)
+void USHealthComponent::TakeDamage(const float InDamage, const AActor* DamagedActor)
 {
-	if (!DamagedActor) return;
+	if (!DamagedActor || bDead) return;
 
-	if (!bDead)
-	{
-		UE_LOG(LogHealthComponent, Log, TEXT("Damage: %s"), *FString::SanitizeFloat(InDamage));
 
-		CurrenHealth = FMath::Clamp(CurrenHealth - InDamage, 0.0f, MaxHealth);
-		OnHealthChanged.Broadcast(CurrenHealth);
-		IsDead(CurrenHealth);
-	}
+	UE_LOG(LogHealthComponent, Log, TEXT("Damage: %s"), *FString::SanitizeFloat(InDamage));
+
+	CurrenHealth = FMath::Clamp(CurrenHealth - InDamage, 0.0f, MaxHealth);
+	OnHealthChanged.Broadcast(CurrenHealth);
+	IsDead(CurrenHealth);
 }
 
 

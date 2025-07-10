@@ -7,6 +7,8 @@
 //Delegates
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeadDelegate);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTakeDamageDelegate);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedDelegate, const float, CurrentHealth);
 
 // Log category for HealthComponent
@@ -20,17 +22,23 @@ class SHOOTER_API USHealthComponent : public UActorComponent
 public:
 	USHealthComponent();
 
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnDeadDelegate OnDead;
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnTakeDamageDelegate OnTakeDamage;
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnHealthChangedDelegate OnHealthChanged;
+	
 	UFUNCTION(BlueprintCallable)
 	void Initialize();
 
 	UFUNCTION(BlueprintCallable)
 	void TakeDamage(const float InDamage, const AActor* DamagedActor);
-	
-	UPROPERTY(BlueprintAssignable, Category = "Events")
-	FOnDeadDelegate OnDead;
 
-	UPROPERTY(BlueprintAssignable, Category = "Events")
-	FOnHealthChangedDelegate OnHealthChanged;
+	UFUNCTION(BlueprintCallable)
+	void GainHealth(const float InValue);
 
 	UFUNCTION(BlueprintCallable)
 	bool IsDead(const float InHealth);

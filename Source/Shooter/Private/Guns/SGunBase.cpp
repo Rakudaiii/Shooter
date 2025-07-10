@@ -76,13 +76,13 @@ void USGunBase::Fire()
 
 	--CurrentAmmo;
 
+	AmmoChangedDelegate.Broadcast(CurrentAmmo);
+
 	if (CurrentAmmo <= 0 && !bIsReloading)
 	{
 		StopFiring(); 
 		ReloadAmmo(); 
 	}
-	
-	DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.0f);
 }
 
 void USGunBase::ReloadAmmo()
@@ -104,4 +104,6 @@ void USGunBase::CompleteReload()
 	bIsReloading = false;
 	
 	UE_LOG(LogGun, Log, TEXT("Reload was completed"));
+
+	AmmoChangedDelegate.Broadcast(CurrentAmmo);
 }

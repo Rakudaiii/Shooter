@@ -42,13 +42,14 @@ void USParkourMovementComponent::InitializeSlide()
 {
 	if (!bCanSlide) return;
 
-	UE_LOG(LogParkourMovementComponent, Log, TEXT("Slide initialized successfully."));
 	
 	NormalSpeed = CharacterMovementComponent->MaxWalkSpeed;
 	NormalFriction = CharacterMovementComponent->GroundFriction;
 	NormalDeceleration = CharacterMovementComponent->BrakingDecelerationWalking;
 	NormalCapsuleHalfHeight = OwnerCharacter->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 	SlideCapsuleHalfHeight = NormalCapsuleHalfHeight / 2.0f;
+	
+	UE_LOG(LogParkourMovementComponent, Log, TEXT("Slide initialized successfully."));
 }
 
 void USParkourMovementComponent::Slide()
@@ -58,6 +59,14 @@ void USParkourMovementComponent::Slide()
 
 	UE_LOG(LogParkourMovementComponent, Warning, TEXT("Sliding"));
 
+	if (bIsStandingUp)
+	{
+		OwnerCharacter->GetCapsuleComponent()->SetCapsuleHalfHeight(NormalCapsuleHalfHeight);
+		CurrentCapsuleHeight = NormalCapsuleHalfHeight;
+		bIsStandingUp = false;
+		UE_LOG(LogParkourMovementComponent, Log, TEXT("Forced stand-up completion before sliding"));
+	}
+	
 	bIsSliding = true;
 
 	StopSprint();

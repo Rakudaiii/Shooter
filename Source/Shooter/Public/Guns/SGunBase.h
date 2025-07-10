@@ -8,12 +8,18 @@
 // Log category for Gun
 DECLARE_LOG_CATEGORY_EXTERN(LogGun, Log, All);
 
+//Delegates
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAmmoChangedDelegate, const int32, CurrentAmmo);
+
 UCLASS(Blueprintable)
 class SHOOTER_API USGunBase : public UObject
 {
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnAmmoChangedDelegate AmmoChangedDelegate;
+	
 	UFUNCTION(BlueprintCallable)
 	virtual void Init(AActor* InCharacter);
 

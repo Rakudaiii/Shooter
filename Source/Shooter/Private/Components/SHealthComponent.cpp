@@ -31,8 +31,16 @@ void USHealthComponent::TakeDamage(const float InDamage, const AActor* DamagedAc
 	UE_LOG(LogHealthComponent, Log, TEXT("Damage: %s"), *FString::SanitizeFloat(InDamage));
 
 	CurrenHealth = FMath::Clamp(CurrenHealth - InDamage, 0.0f, MaxHealth);
+
+	OnTakeDamage.Broadcast();
 	OnHealthChanged.Broadcast(CurrenHealth);
 	IsDead(CurrenHealth);
+}
+
+void USHealthComponent::GainHealth(const float InValue)
+{
+	CurrenHealth = FMath::Clamp(CurrenHealth + InValue, 0.0f, MaxHealth);
+	OnHealthChanged.Broadcast(CurrenHealth);
 }
 
 
